@@ -11,9 +11,6 @@ class FormValidation
     public function setData($data)
     {
         $this->data = $data;
-        echo "<pre>";
-        echo var_dump($this->data);
-        echo "</pre>";
     }
 
     public function setRule($fieldName, $label, $rules)
@@ -26,6 +23,7 @@ class FormValidation
     {
         foreach ($this->rules as $field => $rules) {
             $item['field'] = $field;
+            $item['label'] = $this->label[$field];
             $item['rules'] = $rules;
             $item['value'] = (isset($this->data[$field])) ? $this->data[$field] : '';
             $this->check($item);
@@ -74,20 +72,33 @@ class FormValidation
         return isset($this->errorMessage[$field])? $this->errorMessage[$field] : false ;
     }
 
-    private function not_empty()
+    private function required($item, $valueRule)
     {
-        //
+        $result = true;
+        if ($valueRule) {
+            if (!trim($item['value'])) {
+                $result = false;
+                $this->message(
+                    $item['field'],
+                    __FUNCTION__,
+                    $item['label']. ' harus diisi.'
+                );
+            }
+        }
+        return $result;
     }
 
     private function file_name($item, $rules)
     {
         $item['rules'] = $rules;
+        $item['value'] = $item['value']['name'];
         $this->check($item);
     }
 
     private function file_size($item, $rules)
     {
         $item['rules'] = $rules;
+        $item['value'] = $item['value']['size'];
         $this->check($item);
     }
 }

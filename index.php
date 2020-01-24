@@ -12,44 +12,49 @@
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $validation->setData(array_merge($_POST, $_FILES));
         $validation->setRule('nama', 'Nama lengkap', [
-          'not_empty' => true
+          'required' => true
         ]);
 
-        $validation->setRule('jk', 'Jenis kelmain', [
-          'not_empty' => true
+        $validation->setRule('jk', 'Jenis kelamin', [
+          'required' => true
         ]);
 
         $validation->setRule('foto', 'File foto', [
           'file_name' =>[
-            'not_empty' =>true
-          ],
-          'file_size'=>[
-            'min_size' => 30000,
-            'max_size' => 40000
+            'required' =>true
           ]
         ]);
 
-        $validation->setMessage('nama', [
-          'not_empty' => 'ini pesan kostum'
-        ]);
+        // $validation->setMessage('nama', [
+        //   'required' => 'ini pesan kostum'
+        // ]);
 
         if ($validation->run()) {
-            echo "tidak ada yg error";
-        } else {
-            echo "ada yg error";
+            $data = array_merge($_POST, $_FILES);
+            echo "<pre>";
+            echo var_dump($data);
+            echo "</pre>";
         }
     }
      ?>
 
      <?=form_file()?>
      <label for="nama">Nama:</label><br>
-     <?=input_text('nama', set_value('nama'))?><br>
+     <?=input_text('nama', set_value('nama'))?>
+     <?=($validation->error('nama'))?
+     "<p style='color:red'>".$validation->error('nama')."</p>"
+     : '<br>' ?>
      <label for="jk">Jenis kelamin:</label><br>
      <?=input_radio('jk', 'L', set_checked('L', set_value('jk')))?>Laki-laki
      <?=input_radio('jk', 'P', set_checked('P', set_value('jk')))?>Perempuan
-     <br>
+     <?=($validation->error('jk'))?
+     "<p style='color:red'>".$validation->error('jk')."</p>"
+     : '<br>' ?>
      <label for="foto">File foto:</label>
      <?=input_file('foto') ?>
+     <?=($validation->error('foto'))?
+     "<p style='color:red'>".$validation->error('foto')."</p>"
+     : '<br>' ?>
      <?=input_submit('Kirim')?>
      <?=form_close()?>
   </body>
